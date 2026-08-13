@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Time Count</title>
+<title>Time Keeper</title>
 <style>
   :root {
     --bg: #0f1115;
@@ -11,7 +11,7 @@
     --text: #e8eaed;
     --muted: #8a8f98;
     --accent: #4f8cff;
-    --accent2: #34c77b;
+    --green: #34c77b;
     --danger: #ff5d5d;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,47 +33,42 @@
     border-radius: 16px;
     padding: 28px 36px;
     width: 100%;
-    max-width: 420px;
+    max-width: 440px;
     text-align: center;
     box-shadow: 0 4px 24px rgba(0,0,0,.35);
   }
   .card h2 { font-size: .8rem; font-weight: 600; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px; }
   .clock { font-size: 3rem; font-weight: 700; font-variant-numeric: tabular-nums; }
   .date { color: var(--muted); margin-top: 4px; font-size: .95rem; }
-  .display { font-size: 2.6rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-bottom: 16px; }
-  .btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .status { font-size: 1rem; margin-bottom: 6px; color: var(--muted); }
+  .status.in { color: var(--green); font-weight: 600; }
+  .elapsed { font-size: 2.6rem; font-weight: 700; font-variant-numeric: tabular-nums; margin-bottom: 16px; }
   button {
     border: none;
     border-radius: 10px;
-    padding: 10px 22px;
-    font-size: .95rem;
+    padding: 12px 28px;
+    font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     color: #fff;
-    background: var(--accent);
+    background: var(--green);
     transition: opacity .15s;
   }
   button:hover { opacity: .85; }
-  button.stop { background: var(--danger); }
-  button.reset { background: #3a3f4b; }
-  .inputs { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
-  .inputs input {
-    width: 64px;
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #333845;
-    background: #12141a;
-    color: var(--text);
-    font-size: 1rem;
-    text-align: center;
-  }
-  .inputs input:focus { outline: 2px solid var(--accent); border-color: transparent; }
-  .done { color: var(--accent2); }
+  button.out { background: var(--danger); }
+  button.clear { background: #3a3f4b; font-size: .85rem; padding: 8px 16px; margin-top: 14px; }
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { padding: 8px 4px; text-align: center; }
+  th { color: var(--muted); font-weight: 600; font-size: .75rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #2a2e38; }
+  td { border-bottom: 1px solid #22262f; font-variant-numeric: tabular-nums; }
+  .total { margin-top: 12px; font-weight: 600; }
+  .total span { color: var(--accent); }
+  .empty { color: var(--muted); font-size: .9rem; padding: 12px 0; }
 </style>
 </head>
 <body>
 
-<h1>⏱ Time Count</h1>
+<h1>⏱ Time Keeper</h1>
 
 <div class="card">
   <h2>Current Time</h2>
@@ -82,25 +77,17 @@
 </div>
 
 <div class="card">
-  <h2>Stopwatch</h2>
-  <div class="display" id="swDisplay">00:00.00</div>
-  <div class="btns">
-    <button id="swStart">Start</button>
-    <button id="swReset" class="reset">Reset</button>
-  </div>
+  <h2>Work</h2>
+  <div class="status" id="status">Clocked out</div>
+  <div class="elapsed" id="elapsed">00:00:00</div>
+  <button id="punchBtn">Clock In</button>
 </div>
 
 <div class="card">
-  <h2>Countdown</h2>
-  <div class="inputs">
-    <input type="number" id="cdMin" min="0" max="999" value="5" aria-label="minutes"> <span style="align-self:center">min</span>
-    <input type="number" id="cdSec" min="0" max="59" value="0" aria-label="seconds"> <span style="align-self:center">sec</span>
-  </div>
-  <div class="display" id="cdDisplay">05:00</div>
-  <div class="btns">
-    <button id="cdStart">Start</button>
-    <button id="cdReset" class="reset">Reset</button>
-  </div>
+  <h2>Log</h2>
+  <div id="logWrap"></div>
+  <div class="total">Total: <span id="total">0h 00m</span></div>
+  <button class="clear" id="clearBtn">Clear log</button>
 </div>
 
 <script>
@@ -115,98 +102,89 @@ function tickClock() {
 tickClock();
 setInterval(tickClock, 250);
 
-// ---- Stopwatch ----
-const swDisplay = document.getElementById('swDisplay');
-const swStartBtn = document.getElementById('swStart');
-let swRunning = false, swStartAt = 0, swElapsed = 0, swTimer = null;
+// ---- Timekeeper ----
+const statusEl = document.getElementById('status');
+const elapsedEl = document.getElementById('elapsed');
+const punchBtn = document.getElementById('punchBtn');
+const logWrap = document.getElementById('logWrap');
+const totalEl = document.getElementById('total');
 
-function fmtSw(ms) {
+let entries = JSON.parse(localStorage.getItem('tk_entries') || '[]');
+let clockInAt = JSON.parse(localStorage.getItem('tk_in') || 'null');
+
+function fmtHMS(ms) {
+  const s = Math.floor(ms / 1000);
+  return [Math.floor(s / 3600), Math.floor(s / 60) % 60, s % 60]
+    .map(n => String(n).padStart(2, '0')).join(':');
+}
+function fmtDur(ms) {
   const m = Math.floor(ms / 60000);
-  const s = Math.floor(ms / 1000) % 60;
-  const cs = Math.floor(ms / 10) % 100;
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}.${String(cs).padStart(2,'0')}`;
+  return `${Math.floor(m / 60)}h ${String(m % 60).padStart(2, '0')}m`;
 }
-swStartBtn.addEventListener('click', () => {
-  if (!swRunning) {
-    swRunning = true;
-    swStartAt = Date.now() - swElapsed;
-    swStartBtn.textContent = 'Stop';
-    swStartBtn.classList.add('stop');
-    swTimer = setInterval(() => {
-      swElapsed = Date.now() - swStartAt;
-      swDisplay.textContent = fmtSw(swElapsed);
-    }, 33);
+function fmtTime(ts) {
+  return new Date(ts).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+}
+function fmtDay(ts) {
+  return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+}
+
+function save() {
+  localStorage.setItem('tk_entries', JSON.stringify(entries));
+  localStorage.setItem('tk_in', JSON.stringify(clockInAt));
+}
+
+function renderLog() {
+  if (!entries.length) {
+    logWrap.innerHTML = '<div class="empty">No shifts yet — clock in to start.</div>';
   } else {
-    swRunning = false;
-    clearInterval(swTimer);
-    swStartBtn.textContent = 'Start';
-    swStartBtn.classList.remove('stop');
+    const rows = entries.slice().reverse().map(e =>
+      `<tr><td>${fmtDay(e.in)}</td><td>${fmtTime(e.in)}</td><td>${fmtTime(e.out)}</td><td>${fmtDur(e.out - e.in)}</td></tr>`
+    ).join('');
+    logWrap.innerHTML = `<table><thead><tr><th>Day</th><th>In</th><th>Out</th><th>Time</th></tr></thead><tbody>${rows}</tbody></table>`;
   }
-});
-document.getElementById('swReset').addEventListener('click', () => {
-  swRunning = false;
-  clearInterval(swTimer);
-  swElapsed = 0;
-  swDisplay.textContent = '00:00.00';
-  swStartBtn.textContent = 'Start';
-  swStartBtn.classList.remove('stop');
+  totalEl.textContent = fmtDur(entries.reduce((sum, e) => sum + (e.out - e.in), 0));
+}
+
+function renderStatus() {
+  if (clockInAt) {
+    statusEl.textContent = 'Clocked in since ' + fmtTime(clockInAt);
+    statusEl.classList.add('in');
+    punchBtn.textContent = 'Clock Out';
+    punchBtn.classList.add('out');
+  } else {
+    statusEl.textContent = 'Clocked out';
+    statusEl.classList.remove('in');
+    punchBtn.textContent = 'Clock In';
+    punchBtn.classList.remove('out');
+    elapsedEl.textContent = '00:00:00';
+  }
+}
+
+setInterval(() => {
+  if (clockInAt) elapsedEl.textContent = fmtHMS(Date.now() - clockInAt);
+}, 250);
+
+punchBtn.addEventListener('click', () => {
+  if (!clockInAt) {
+    clockInAt = Date.now();
+  } else {
+    entries.push({ in: clockInAt, out: Date.now() });
+    clockInAt = null;
+  }
+  save();
+  renderStatus();
+  renderLog();
 });
 
-// ---- Countdown ----
-const cdDisplay = document.getElementById('cdDisplay');
-const cdStartBtn = document.getElementById('cdStart');
-const cdMin = document.getElementById('cdMin');
-const cdSec = document.getElementById('cdSec');
-let cdRunning = false, cdEndAt = 0, cdTimer = null;
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if (!confirm('Clear the whole log?')) return;
+  entries = [];
+  save();
+  renderLog();
+});
 
-function fmtCd(ms) {
-  const total = Math.max(0, Math.ceil(ms / 1000));
-  const m = Math.floor(total / 60);
-  const s = total % 60;
-  return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-}
-function cdInputMs() {
-  return ((parseInt(cdMin.value) || 0) * 60 + (parseInt(cdSec.value) || 0)) * 1000;
-}
-[cdMin, cdSec].forEach(el => el.addEventListener('input', () => {
-  if (!cdRunning) cdDisplay.textContent = fmtCd(cdInputMs());
-}));
-cdStartBtn.addEventListener('click', () => {
-  if (!cdRunning) {
-    const ms = cdInputMs();
-    if (ms <= 0) return;
-    cdRunning = true;
-    cdEndAt = Date.now() + ms;
-    cdDisplay.classList.remove('done');
-    cdStartBtn.textContent = 'Stop';
-    cdStartBtn.classList.add('stop');
-    cdTimer = setInterval(() => {
-      const left = cdEndAt - Date.now();
-      cdDisplay.textContent = fmtCd(left);
-      if (left <= 0) {
-        clearInterval(cdTimer);
-        cdRunning = false;
-        cdDisplay.textContent = "Time's up!";
-        cdDisplay.classList.add('done');
-        cdStartBtn.textContent = 'Start';
-        cdStartBtn.classList.remove('stop');
-      }
-    }, 200);
-  } else {
-    cdRunning = false;
-    clearInterval(cdTimer);
-    cdStartBtn.textContent = 'Start';
-    cdStartBtn.classList.remove('stop');
-  }
-});
-document.getElementById('cdReset').addEventListener('click', () => {
-  cdRunning = false;
-  clearInterval(cdTimer);
-  cdDisplay.classList.remove('done');
-  cdDisplay.textContent = fmtCd(cdInputMs());
-  cdStartBtn.textContent = 'Start';
-  cdStartBtn.classList.remove('stop');
-});
+renderStatus();
+renderLog();
 </script>
 
 </body>

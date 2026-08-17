@@ -69,6 +69,9 @@
   }
   .inputs input:focus { outline: 2px solid var(--accent); border-color: transparent; }
   .done { color: var(--accent2); }
+  .nav { color: var(--muted); font-size: .9rem; }
+  .nav a { color: var(--accent); text-decoration: none; font-weight: 600; }
+  .nav a:hover { text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -102,6 +105,8 @@
     <button id="cdReset" class="reset">Reset</button>
   </div>
 </div>
+
+<p class="nav">Playing with friends? → <a href="./imposter/">🕵️ Imposter</a> · <a href="./nakama/">🍵 Nakama</a></p>
 
 <script>
 // ---- Live clock ----

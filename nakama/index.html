@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Nakama</title>
+<meta name="description" content="Five pass-the-phone games that get friends past small talk — question cards, guessing rounds and voting.">
+<meta name="theme-color" content="#EDEEEA">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍵</text></svg>">
+<style>
+  /* ---------- tokens: light is the base ---------- */
+  :root {
+    --ground: #EDEEEA;
+    --surface: #F7F8F5;
+    --line: #D7D9D2;
+    --ink: #1F2229;
+    --muted: #6E746C;
+    --btn-bg: #1F2229;
+    --btn-fg: #F7F8F5;
+
+    --asagi: #2E7373;
+    --yamabuki: #96690E;
+    --suou: #7A3244;
+    --card-fg: #FCFBF7;
+
+    --font-display: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP", "Songti SC", Georgia, "Times New Roman", serif;
+    --font-body: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Segoe UI", Roboto, sans-serif;
+    --font-num: ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #16191A;
+      --surface: #1E2223;
+      --line: #2F3435;
+      --ink: #E9EAE6;
+      --muted: #949B95;
+      --btn-bg: #E9EAE6;
+      --btn-fg: #16191A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #16191A;
+    --surface: #1E2223;
+    --line: #2F3435;
+    --ink: #E9EAE6;
+    --muted: #949B95;
+    --btn-bg: #E9EAE6;
+    --btn-fg: #16191A;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    font-family: var(--font-body);
+    background: var(--ground);
+    color: var(--ink);
+    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 22px 18px calc(32px + env(safe-area-inset-bottom));
+    line-height: 1.5;
+  }
+  .wrap { width: 100%; max-width: 440px; display: flex; flex-direction: column; gap: 22px; }
+
+  /* ---------- type ---------- */
+  .eyebrow {
+    font-size: .7rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: baseline; gap: .6em;
+  }
+  .eyebrow .ja { letter-spacing: .08em; font-weight: 600; }
+  h1 { font-family: var(--font-display); font-size: 2rem; font-weight: 600; letter-spacing: .02em; }
+  h1 .ja { font-size: 1.5rem; color: var(--muted); margin-left: .35em; }
+  .lede { color: var(--muted); font-size: .9rem; margin-top: 4px; }
+
+  /* ---------- buttons ---------- */
+  button {
+    font-family: inherit; font-size: 1rem; font-weight: 600;
+    border: none; border-radius: 10px; cursor: pointer;
+    padding: 15px 18px;
+    background: var(--btn-bg); color: var(--btn-fg);
+    transition: transform .09s ease, opacity .15s ease;
+  }
+  button:active { transform: scale(.985); }
+  button:focus-visible { outline: 3px solid var(--asagi); outline-offset: 2px; }
+  button:disabled { opacity: .35; cursor: not-allowed; }
+  .block { width: 100%; }
+  .quiet {
+    background: transparent; color: var(--ink);
+    border: 1px solid var(--line); font-weight: 600;
+  }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ---------- players ---------- */
+  .panel { display: flex; flex-direction: column; gap: 12px; }
+  .roster { display: flex; flex-wrap: wrap; gap: 7px; }
+  .who-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 9px 7px 13px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: .9rem; font-weight: 600;
+  }
+  .who-chip button {
+    all: unset; cursor: pointer; color: var(--muted);
+    width: 19px; height: 19px; border-radius: 50%;
+    display: grid; place-items: center; font-size: .95rem; line-height: 1;
+  }
+  .who-chip button:hover { color: var(--suou); }
+  .add-row { display: flex; gap: 8px; }
+  .add-row input {
+    flex: 1; min-width: 0;
+    font-family: inherit; font-size: 1rem;
+    padding: 13px 14px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+  }
+  .add-row input::placeholder { color: var(--muted); }
+  .add-row input:focus { outline: 2px solid var(--ink); outline-offset: -1px; border-color: transparent; }
+  .add-row button { flex: 0 0 auto; padding: 13px 20px; }
+
+  /* ---------- mode list ---------- */
+  .modes { display: flex; flex-direction: column; }
+  .mode {
+    all: unset; cursor: pointer;
+    display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: baseline;
+    padding: 16px 2px; border-top: 1px solid var(--line);
+  }
+  .modes .mode:last-child { border-bottom: 1px solid var(--line); }
+  .mode:focus-visible { outline: 2px solid var(--asagi); outline-offset: 2px; }
+  .mode .mark { font-family: var(--font-display); font-size: 1.5rem; line-height: 1; }
+  .mode .t { display: block; font-family: var(--font-display); font-size: 1.22rem; font-weight: 600; }
+  .mode .t .ja { font-family: var(--font-body); font-size: .8rem; font-weight: 600; color: var(--muted); margin-left: .5em; letter-spacing: .04em; }
+  .mode .d { display: block; font-size: .85rem; color: var(--muted); margin-top: 3px; }
+  .level .lt, .level .ld { display: block; }
+
+  /* ---------- the card ---------- */
+  .card {
+    background: var(--fill, var(--asagi));
+    color: var(--card-fg);
+    border-radius: 14px;
+    padding: 30px 24px 26px;
+    min-height: 300px;
+    display: flex; flex-direction: column; gap: 16px;
+    box-shadow: 0 10px 30px -14px rgba(0,0,0,.55);
+  }
+  .card.l1 { --fill: var(--asagi); }
+  .card.l2 { --fill: var(--yamabuki); }
+  .card.l3 { --fill: var(--suou); }
+  .card .eyebrow { color: rgba(252,251,247,.72); }
+  .card .q {
+    font-family: var(--font-display);
+    font-size: 1.75rem; line-height: 1.32; font-weight: 600;
+    text-wrap: balance;
+  }
+  .card .q-ja {
+    font-size: 1rem; line-height: 1.6; color: rgba(252,251,247,.82);
+    margin-top: -4px;
+  }
+  .card .foot { margin-top: auto; font-size: .85rem; color: rgba(252,251,247,.78); }
+  .card .foot b { color: var(--card-fg); font-size: 1rem; }
+  .card-anim { animation: rise .26s cubic-bezier(.2,.7,.3,1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .card-anim { animation: none; } }
+
+  /* ---------- level picker ---------- */
+  .levels { display: flex; flex-direction: column; gap: 8px; }
+  .level {
+    all: unset; cursor: pointer;
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--line);
+  }
+  .level:focus-visible { outline: 2px solid var(--asagi); outline-offset: 2px; }
+  .level .dot { width: 11px; height: 11px; border-radius: 50%; flex: 0 0 auto; }
+  .level .lt { font-weight: 700; font-size: .98rem; }
+  .level .ld { font-size: .82rem; color: var(--muted); margin-top: 1px; }
+
+  /* ---------- countdown ---------- */
+  .count {
+    font-family: var(--font-display);
+    font-size: 5.5rem; line-height: 1; text-align: center;
+    color: var(--card-fg);
+  }
+  .count.go { font-size: 3rem; }
+
+  /* ---------- timer ---------- */
+  .clock {
+    font-family: var(--font-num); font-variant-numeric: tabular-nums;
+    font-size: 3.4rem; text-align: center; letter-spacing: -.02em;
+  }
+  .clock.low { color: #C4677C; }
+
+  /* ---------- scoring ---------- */
+  .tap-list { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tap {
+    all: unset; cursor: pointer;
+    padding: 11px 16px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface);
+    font-size: .95rem; font-weight: 600;
+  }
+  .tap[aria-pressed="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+  .tap:focus-visible { outline: 2px solid var(--asagi); outline-offset: 2px; }
+
+  .board { display: flex; flex-direction: column; }
+  .board .r {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 9px 0; border-top: 1px solid var(--line);
+    font-size: .95rem;
+  }
+  .board .r:first-child { border-top: none; }
+  .board .r b { font-family: var(--font-num); font-variant-numeric: tabular-nums; }
+  .board .r.top b { color: var(--yamabuki); }
+
+  .note { font-size: .85rem; color: var(--muted); }
+  .note b { color: var(--ink); font-weight: 600; }
+  .screen { display: none; flex-direction: column; gap: 20px; }
+  .screen.on { display: flex; }
+  .err { color: var(--suou); font-size: .87rem; font-weight: 600; min-height: 1.2em; }
+  footer { color: var(--muted); font-size: .78rem; text-align: center; }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ======================= HOME ======================= -->
+<section class="screen on" id="s-home">
+  <div>
+    <h1>Nakama<span class="ja">仲間</span></h1>
+    <p class="lede">Five games for one phone and a table of friends. Nothing to install, nobody sits out.</p>
+  </div>
+
+  <div class="panel">
+    <div class="eyebrow">Who's here <span class="ja">メンバー</span></div>
+    <div class="roster" id="roster"></div>
+    <div class="add-row">
+      <input id="nameInput" type="text" placeholder="Add a name" maxlength="14" autocomplete="off" enterkeyhint="done">
+      <button id="addBtn">Add</button>
+    </div>
+    <div class="err" id="homeErr"></div>
+  </div>
+
+  <div class="modes" id="modes"></div>
+
+  <div class="panel" id="boardPanel" hidden>
+    <div class="eyebrow">Scores <span class="ja">得点</span></div>
+    <div class="board" id="board"></div>
+    <button class="quiet" id="clearScores">Clear scores</button>
+  </div>
+
+  <footer>Play in order, or hop between games. <a href="../imposter/">🕵️ Imposter</a></footer>
+</section>
+
+<!-- ======================= DEEP CUTS ======================= -->
+<section class="screen" id="s-deep">
+  <div class="eyebrow">Question cards <span class="ja">質問カード</span></div>
+  <div id="deepPick" class="levels"></div>
+  <div id="deepCardHost"></div>
+  <div id="deepControls"></div>
+  <button class="quiet block" data-home>Back</button>
+</section>
+
+<!-- ======================= GUESS ME ======================= -->
+<section class="screen" id="s-guess">
+  <div class="eyebrow">Guess me <span class="ja">せーの、当てて</span></div>
+  <div id="guessHost"></div>
+  <div id="guessControls"></div>
+  <button class="quiet block" data-home>Back</button>
+</section>
+
+<!-- ======================= MOST LIKELY TO ======================= -->
+<section class="screen" id="s-likely">
+  <div class="eyebrow">Most likely to <span class="ja">一番ありそうな人</span></div>
+  <div id="likelyHost"></div>
+  <div id="likelyControls"></div>
+  <button class="quiet block" data-home>Back</button>
+</section>
+
+<!-- ======================= TWO TRUTHS ======================= -->
+<section class="screen" id="s-truths">
+  <div class="eyebrow">Two truths, one lie <span class="ja">嘘はどれ</span></div>
+  <div id="truthsHost"></div>
+  <div id="truthsControls"></div>
+  <button class="quiet block" data-home>Back</button>
+</section>
+
+<!-- ======================= HOT SEAT ======================= -->
+<section class="screen" id="s-hot">
+  <div class="eyebrow">Hot seat <span class="ja">60秒</span></div>
+  <div id="hotHost"></div>
+  <div id="hotControls"></div>
+  <button class="quiet block" data-home>Back</button>
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =====================================================================
+   CONTENT — bilingual, written for university students living in Japan
+   ===================================================================== */
+
+const DEEP = {
+  1: [
+    ["What's your comfort food when you're broke?", "金欠のときの救世主メシは？"],
+    ["Show us the last photo you took. No scrolling.", "最後に撮った写真を見せて。選び直しナシ。"],
+    ["Which konbini is objectively the best? Defend it.", "コンビニで一番いいのはどこ？理由も言って。"],
+    ["What song is stuck in your head right now?", "今、頭の中で流れている曲は？"],
+    ["What's your most-used emoji, and what does it actually mean?", "一番使う絵文字は？本当の意味は？"],
+    ["What's the weirdest thing in your bag right now?", "今カバンに入っている一番変なものは？"],
+    ["What small thing instantly ruins your mood?", "一瞬で気分が下がる小さなことは？"],
+    ["What's your karaoke song — the one you always go back to?", "カラオケの十八番は？"],
+    ["You must spend ¥10,000 before midnight. On what?", "今日中に1万円を使い切るなら、何に使う？"],
+    ["Best thing you've eaten in Japan so far?", "日本で食べた中で一番美味しかったものは？"],
+    ["What time did you actually go to sleep last night?", "昨日、実際は何時に寝た？"],
+    ["Which app do you open first in the morning?", "朝、最初に開くアプリは？"],
+    ["What trend did you pretend to like?", "本当は興味ないのに好きなフリをした流行りは？"],
+    ["What's the best ¥500 you've ever spent?", "今までで一番よかった500円の使い道は？"],
+    ["Which season in Japan do you actually like?", "日本の四季で、本当に好きなのはどれ？"],
+    ["What could you teach all of us in ten minutes?", "10分あれば全員に教えられることは？"],
+    ["What's your most useless talent?", "一番役に立たない特技は？"],
+    ["What did you want to be when you were ten?", "10歳のとき、何になりたかった？"],
+    ["Describe your ideal Sunday, hour by hour.", "理想の日曜日を、時間ごとに説明して。"],
+    ["Who here would last longest without a phone?", "この中でスマホなしで一番長く生きられるのは誰？"],
+    ["What food will you simply never eat?", "絶対に食べないと決めている食べ物は？"],
+    ["What's the last thing that made you laugh out loud?", "最後に声を出して笑ったのは何？"],
+    ["Worst haircut you've ever had. Details.", "今までで一番の失敗ヘアは？詳しく。"],
+    ["What do you always order, everywhere, without thinking?", "どこに行っても必ず頼んでしまうものは？"],
+    ["Which of us gives the best advice?", "この中で一番いいアドバイスをくれるのは誰？"],
+  ],
+  2: [
+    ["What are you better at than you let on?", "実は得意なのに、あまり言わないことは？"],
+    ["What part of 就活 actually scares you?", "就活で、本当は何が怖い？"],
+    ["When did you last feel proud of yourself?", "最後に自分を誇らしいと思ったのはいつ？"],
+    ["What do you miss from home that you never talk about?", "地元や母国で恋しいのに、話さないことは？"],
+    ["What do you do when you're stressed that you'd never post about?", "ストレスのとき、絶対に投稿しないやり方で何をする？"],
+    ["Which compliment has stayed with you for years?", "何年も覚えている褒め言葉は？"],
+    ["What do people usually get wrong about you?", "よく誤解されるところは？"],
+    ["Which parent are you more like, and how do you feel about that?", "父と母、どちらに似ている？それについてどう思う？"],
+    ["What decision are you currently avoiding?", "今、決めるのを先延ばしにしていることは？"],
+    ["What are you spending too much money on?", "使いすぎているお金の使い道は？"],
+    ["Is there a friendship you let fade? Do you regret it?", "自然消滅した友情はある？後悔してる？"],
+    ["Do you feel behind compared to people your age?", "同年代と比べて、遅れていると感じる？"],
+    ["What did you change your mind about this year?", "今年、考えが変わったことは？"],
+    ["If money truly didn't matter, what would you do with your twenties?", "お金が関係ないなら、20代を何に使う？"],
+    ["What's the hardest part of living in Japan for you?", "日本で暮らしていて、一番大変なことは？"],
+    ["What do you want more of in your life right now?", "今の生活に、もっと欲しいものは？"],
+    ["When do you feel most like yourself?", "一番自分らしくいられるのはどんなとき？"],
+    ["Which habit are you trying to break?", "やめようとしている習慣は？"],
+    ["Who do you text first when something good happens?", "いいことがあったとき、最初に連絡するのは誰？"],
+    ["What was the last real risk you took?", "最後に取った本当のリスクは？"],
+    ["What kind of tired are you these days?", "最近の疲れは、どんな種類の疲れ？"],
+    ["What do you pretend not to care about?", "気にしていないフリをしていることは？"],
+    ["What did you learn the hard way?", "痛い思いをして学んだことは？"],
+    ["What would your 15-year-old self think of you now?", "15歳の自分が今のあなたを見たら、何て言う？"],
+    ["What's something you want but feel embarrassed to admit?", "欲しいのに、認めるのが恥ずかしいものは？"],
+  ],
+  3: [
+    ["What do you need from your friends that you've never asked for?", "友達に求めているのに、まだ頼めていないことは？"],
+    ["When did you feel most alone this year?", "今年、一番孤独を感じたのはいつ？"],
+    ["What's a fear you rarely say out loud?", "めったに口に出さない不安は？"],
+    ["Who here do you wish you knew better? Tell them why.", "この中でもっと知りたい人は誰？理由も伝えて。"],
+    ["What's the kindest thing anyone has done for you?", "今まで受けた中で一番の優しさは？"],
+    ["Honestly — what do you want your life to look like in five years?", "正直なところ、5年後どんな人生でいたい？"],
+    ["What would you tell yourself on your first day in Japan?", "日本に来た初日の自分に、何と言う？"],
+    ["What have you not forgiven yourself for?", "自分をまだ許せていないことは？"],
+    ["What do you hope people say about you when you're not there?", "いない場所で、どんな人だと言われたい？"],
+    ["Is there something you've been wanting to say to someone here?", "この中の誰かに、ずっと言いたかったことはある？"],
+    ["What does 'home' mean to you now — has it changed?", "今、「home」はあなたにとって何？変わった？"],
+    ["What dream did you quietly give up on?", "静かに諦めた夢は？"],
+    ["When did you last feel truly understood?", "最後に本当に理解されたと感じたのはいつ？"],
+    ["Who shaped you the most? Do they know?", "一番影響を受けた人は誰？その人は知っている？"],
+    ["What are you carrying right now that you haven't told anyone?", "今、誰にも話していない重荷は？"],
+    ["What would you do differently if you weren't afraid?", "怖くなかったら、何を変える？"],
+    ["Tell someone here one thing you appreciate about them.", "この中の誰かに、感謝していることを一つ伝えて。"],
+    ["What has this year taught you about yourself?", "今年、自分について何を学んだ？"],
+    ["What kind of friend do you want to be to us?", "私たちにとって、どんな友達でありたい？"],
+    ["When do you feel closest to the people around you?", "周りの人と一番近いと感じるのはどんなとき？"],
+    ["What's the question you wish someone would ask you? Answer it.", "誰かに聞いてほしい質問は？それに答えて。"],
+    ["What part of yourself are you still figuring out?", "自分のどんな部分を、まだ探している？"],
+    ["What would you want us to remember about you?", "私たちに覚えていてほしいことは？"],
+    ["Who do you owe an apology to?", "誰に謝りたい？"],
+    ["What has been the loneliest part of being far from family?", "家族から離れていて、一番寂しいのはどんなこと？"],
+  ],
+};
+
+const GUESS = [
+  ["What would {n} do with a completely free Saturday?", "{n}は完全に自由な土曜日に何をする？"],
+  ["What's {n}'s comfort food?", "{n}の落ち込んだときの食べ物は？"],
+  ["Which app does {n} waste the most time on?", "{n}が一番時間を溶かすアプリは？"],
+  ["What time does {n} actually wake up on weekdays?", "{n}は平日、実際何時に起きる？"],
+  ["{n} suddenly has ¥50,000. What happens to it?", "{n}が突然5万円もらったら、どうなる？"],
+  ["What's {n}'s biggest pet peeve?", "{n}が一番イラっとすることは？"],
+  ["Where does {n} most want to travel next?", "{n}が次に一番行きたい場所は？"],
+  ["What's {n}'s karaoke song?", "{n}のカラオケの十八番は？"],
+  ["Would {n} rather be rich or famous?", "{n}は金持ちと有名人、どっちを選ぶ？"],
+  ["What did {n} want to be as a kid?", "{n}は子どもの頃、何になりたかった？"],
+  ["Cat person or dog person — which is {n}?", "{n}は猫派？犬派？"],
+  ["What does {n} do first when stressed?", "{n}はストレスを感じたら最初に何をする？"],
+  ["Could {n} survive one week without a phone?", "{n}はスマホなしで1週間過ごせる？"],
+  ["What's {n}'s real dream job — not the safe answer?", "{n}の本当の夢の仕事は？無難な答えはナシ。"],
+  ["What food would {n} never eat?", "{n}が絶対に食べないものは？"],
+  ["Who here would {n} call at 3am?", "{n}が深夜3時に電話するのはこの中の誰？"],
+  ["What's {n}'s hidden talent?", "{n}の隠れた特技は？"],
+  ["Morning person or night owl?", "{n}は朝型？夜型？"],
+  ["How many alarms does {n} set?", "{n}はアラームをいくつセットしている？"],
+  ["What's {n}'s usual order at a cafe?", "{n}のカフェでの定番の注文は？"],
+  ["What would instantly make {n}'s day better today?", "今日、{n}が一瞬で機嫌よくなる出来事は？"],
+  ["What is {n} most likely to be late for?", "{n}が遅刻しそうなのは何？"],
+  ["What was the last thing {n} bought?", "{n}が最後に買ったものは？"],
+  ["What show is {n}'s guilty pleasure?", "{n}がこっそりハマっている番組は？"],
+  ["If {n} could master one skill instantly, what would it be?", "{n}が一瞬で身につけたい技術は？"],
+  ["What would {n} take to a deserted island?", "{n}が無人島に持っていくものは？"],
+  ["How does {n} spend the last hour before sleeping?", "{n}は寝る前の1時間、何をしている？"],
+  ["What subject was {n} worst at in high school?", "{n}が高校で一番苦手だった科目は？"],
+  ["What compliment does {n} most want to hear?", "{n}が一番言われたい褒め言葉は？"],
+  ["Which of us is {n} most similar to?", "{n}はこの中の誰に一番似ている？"],
+];
+
+const LIKELY = [
+  ["fall asleep in 1限", "1限で寝る"],
+  ["get rich first", "最初に金持ちになる"],
+  ["miss the last train", "終電を逃す"],
+  ["cry at a movie", "映画で泣く"],
+  ["start their own business", "起業する"],
+  ["move abroad and stay", "海外に移住してそのまま住む"],
+  ["forget a friend's birthday", "友達の誕生日を忘れる"],
+  ["end up on TV", "テレビに出る"],
+  ["adopt five cats", "猫を5匹飼う"],
+  ["survive a zombie apocalypse", "ゾンビだらけの世界で生き残る"],
+  ["be the first to fall asleep at a 飲み会", "飲み会で最初に潰れる"],
+  ["become a professor", "教授になる"],
+  ["get lost in their own neighborhood", "自分の近所で迷子になる"],
+  ["spend their whole budget on food", "生活費を全部食費に使う"],
+  ["show up thirty minutes late", "30分遅刻して来る"],
+  ["eat the same meal every day for a year", "1年間同じものを食べ続ける"],
+  ["win an argument with a professor", "教授との議論に勝つ"],
+  ["take the best photos of the group", "みんなの一番いい写真を撮る"],
+  ["leave their laptop on the train", "電車にパソコンを置き忘れる"],
+  ["still be our friend in twenty years", "20年後もまだ友達でいる"],
+  ["say yes to literally anything", "何にでもYESと言う"],
+  ["secretly be a genius", "実は天才"],
+  ["pull an all-nighter for fun", "楽しくて徹夜する"],
+  ["become a strict parent", "厳しい親になる"],
+  ["break something expensive", "高いものを壊す"],
+  ["eat five meals in one day", "1日に5食食べる"],
+  ["forgive anything", "何でも許してしまう"],
+  ["cry from happiness at a wedding", "結婚式で嬉し泣きする"],
+  ["move back home eventually", "結局、地元に戻る"],
+  ["be the one who organizes the reunion", "同窓会を企画する"],
+];
+
+const HOT = [
+  ["Coffee or tea?", "コーヒー派？お茶派？"],
+  ["Best day of your week?", "一週間で一番いい曜日は？"],
+  ["Text or call?", "LINE派？電話派？"],
+  ["Beach or mountain?", "海派？山派？"],
+  ["Last thing you googled?", "最後に検索したことは？"],
+  ["Ramen or curry?", "ラーメンとカレー、どっち？"],
+  ["Biggest fear?", "一番怖いものは？"],
+  ["Favorite person in your family?", "家族の中で一番好きなのは誰？"],
+  ["Something you're bad at?", "苦手なことは？"],
+  ["Best decision this year?", "今年の一番いい決断は？"],
+  ["Sleep in or wake up early?", "寝坊と早起き、どっち？"],
+  ["What are you saving money for?", "何のために貯金してる？"],
+  ["Last thing you regret buying?", "買って後悔したものは？"],
+  ["Favorite place on campus?", "キャンパスで一番好きな場所は？"],
+  ["Who do you miss?", "今、誰が恋しい？"],
+  ["Dream city to live in?", "住んでみたい街は？"],
+  ["What makes you instantly angry?", "一瞬でイラっとすることは？"],
+  ["Winter or summer?", "冬派？夏派？"],
+  ["What's on your mind lately?", "最近、頭の中を占めていることは？"],
+  ["A movie you'd rewatch tonight?", "今夜もう一度観たい映画は？"],
+  ["Cook or eat out?", "自炊派？外食派？"],
+  ["What are you proud of this week?", "今週、誇れることは？"],
+  ["Most useful thing you own?", "持ち物で一番役に立つものは？"],
+  ["Who did you talk to today?", "今日、誰と話した？"],
+  ["What's your worst habit?", "一番悪い癖は？"],
+  ["Something you want to try this year?", "今年やってみたいことは？"],
+  ["Favorite sound?", "好きな音は？"],
+  ["Loud group or quiet group?", "賑やかな集まり？静かな集まり？"],
+  ["Who taught you the most?", "一番多くを教えてくれた人は？"],
+  ["One thing you'd change about today?", "今日を一つだけ変えられるなら？"],
+];
+
+const MODES = [
+  { id: "deep",   mark: "問", t: "Deep Cuts",       ja: "質問カード",   d: "Question cards in three depths. Answer, then take one follow-up.", min: 2 },
+  { id: "guess",  mark: "推", t: "Guess Me",        ja: "せーの、当てて", d: "Everyone guesses your answer at once. Points for whoever knows you.", min: 3 },
+  { id: "likely", mark: "指", t: "Most Likely To",  ja: "一番ありそう",  d: "Countdown, then everyone points at once. Loudest laugh wins.", min: 3 },
+  { id: "truths", mark: "嘘", t: "Two Truths, One Lie", ja: "嘘はどれ", d: "Sixty seconds to invent one. The group hunts for it.", min: 3 },
+  { id: "hot",    mark: "熱", t: "Hot Seat",        ja: "60秒",        d: "One person, sixty seconds, as many questions as they can take.", min: 2 },
+];
+
+/* =====================================================================
+   State
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem("nakama." + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem("nakama." + k, JSON.stringify(v)); } catch (e) {} },
+};
+
+let players = store.get("players", []);
+let scores = store.get("scores", {});
+let seen = store.get("seen", {});          // deck-key -> array of used indexes
+let turn = store.get("turn", 0);           // rotating subject index
+
+function savePlayers() { store.set("players", players); }
+function saveScores() { store.set("scores", scores); }
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* Draw without repeats until the deck is exhausted. */
+function draw(key, deck) {
+  let used = seen[key] || [];
+  if (used.length >= deck.length) used = [];
+  const open = deck.map((_, i) => i).filter(i => !used.includes(i));
+  const idx = open[Math.floor(Math.random() * open.length)];
+  seen[key] = used.concat(idx);
+  store.set("seen", seen);
+  return deck[idx];
+}
+
+function otherThan(i) {
+  return players.map((n, j) => j).filter(j => j !== i);
+}
+
+function award(name, n) {
+  scores[name] = (scores[name] || 0) + n;
+  saveScores();
+}
+
+/* =====================================================================
+   Home
+   ===================================================================== */
+function renderRoster() {
+  const box = $("roster");
+  box.innerHTML = "";
+  if (!players.length) {
+    box.innerHTML = '<span class="note">Add everyone at the table — names show up inside the games.</span>';
+  }
+  players.forEach((n, i) => {
+    const chip = document.createElement("span");
+    chip.className = "who-chip";
+    chip.innerHTML = esc(n);
+    const x = document.createElement("button");
+    x.type = "button";
+    x.setAttribute("aria-label", "Remove " + n);
+    x.textContent = "×";
+    x.addEventListener("click", () => {
+      players.splice(i, 1);
+      savePlayers();
+      renderRoster();
+      renderBoard();
+    });
+    chip.appendChild(x);
+    box.appendChild(chip);
+  });
+}
+
+function addPlayer() {
+  const input = $("nameInput");
+  const name = input.value.trim();
+  $("homeErr").textContent = "";
+  if (!name) return;
+  if (players.some(p => p.toLowerCase() === name.toLowerCase())) {
+    $("homeErr").textContent = "That name is already in.";
+    return;
+  }
+  if (players.length >= 14) {
+    $("homeErr").textContent = "Fourteen is plenty.";
+    return;
+  }
+  players.push(name);
+  savePlayers();
+  input.value = "";
+  input.focus();
+  renderRoster();
+  renderBoard();
+}
+$("addBtn").addEventListener("click", addPlayer);
+$("nameInput").addEventListener("keydown", e => { if (e.key === "Enter") addPlayer(); });
+
+function renderModes() {
+  const box = $("modes");
+  box.innerHTML = "";
+  MODES.forEach(m => {
+    const el = document.createElement("button");
+    el.className = "mode";
+    el.type = "button";
+    el.innerHTML =
+      `<span class="mark">${m.mark}</span>
+       <span><span class="t">${esc(m.t)}<span class="ja">${esc(m.ja)}</span></span>
+       <span class="d">${esc(m.d)}</span></span>`;
+    el.addEventListener("click", () => {
+      if (players.length < m.min) {
+        $("homeErr").textContent = `${m.t} needs at least ${m.min} people. Add names above.`;
+        $("nameInput").focus();
+        return;
+      }
+      $("homeErr").textContent = "";
+      START[m.id]();
+    });
+    box.appendChild(el);
+  });
+}
+
+function renderBoard() {
+  const names = players.filter(p => scores[p]);
+  $("boardPanel").hidden = names.length === 0;
+  const box = $("board");
+  box.innerHTML = "";
+  const top = Math.max(...names.map(n => scores[n]), 0);
+  names.sort((a, b) => scores[b] - scores[a]).forEach(n => {
+    const r = document.createElement("div");
+    r.className = "r" + (scores[n] === top ? " top" : "");
+    r.innerHTML = `<span>${esc(n)}</span><b>${scores[n]}</b>`;
+    box.appendChild(r);
+  });
+}
+$("clearScores").addEventListener("click", () => {
+  scores = {};
+  saveScores();
+  renderBoard();
+});
+
+function show(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.toggle("on", s.id === id));
+  window.scrollTo(0, 0);
+}
+function home() {
+  stopClock();
+  renderRoster();
+  renderBoard();
+  show("s-home");
+}
+document.querySelectorAll("[data-home]").forEach(b => b.addEventListener("click", home));
+
+/* Small builders shared by the modes. */
+function card(level, inner) {
+  return `<div class="card l${level} card-anim">${inner}</div>`;
+}
+function btn(label, onClick, quiet) {
+  const b = document.createElement("button");
+  b.className = "block" + (quiet ? " quiet" : "");
+  b.textContent = label;
+  b.addEventListener("click", onClick);
+  return b;
+}
+function controls(host, ...els) {
+  const box = $(host);
+  box.innerHTML = "";
+  box.style.display = "flex";
+  box.style.flexDirection = "column";
+  box.style.gap = "10px";
+  els.filter(Boolean).forEach(e => box.appendChild(e));
+}
+
+/* =====================================================================
+   Mode: Deep Cuts
+   ===================================================================== */
+const LEVELS = [
+  { n: 1, color: "var(--asagi)",    t: "Level 1 — Warm up",  ja: "軽く",  d: "Easy, funny, no pressure." },
+  { n: 2, color: "var(--yamabuki)", t: "Level 2 — Honest",   ja: "本音",  d: "Real answers. Still comfortable." },
+  { n: 3, color: "var(--suou)",     t: "Level 3 — Deep",     ja: "深く",  d: "Vulnerable. Anyone may pass." },
+];
+let deepLevel = 0;
+
+function startDeep() {
+  deepLevel = 0;
+  $("deepCardHost").innerHTML = "";
+  $("deepControls").innerHTML = "";
+  const box = $("deepPick");
+  box.hidden = false;
+  box.innerHTML = "";
+  LEVELS.forEach(l => {
+    const el = document.createElement("button");
+    el.className = "level";
+    el.type = "button";
+    el.innerHTML =
+      `<span class="dot" style="background:${l.color}"></span>
+       <span><span class="lt">${l.t} <span style="color:var(--muted);font-weight:600">${l.ja}</span></span>
+       <span class="ld">${l.d}</span></span>`;
+    el.addEventListener("click", () => { deepLevel = l.n; deepCard(); });
+    box.appendChild(el);
+  });
+  show("s-deep");
+}
+
+function deepCard() {
+  $("deepPick").hidden = true;
+  const [en, ja] = draw("deep" + deepLevel, DEEP[deepLevel]);
+  const who = players[Math.floor(Math.random() * players.length)];
+  $("deepCardHost").innerHTML = card(deepLevel,
+    `<div class="eyebrow">Level ${deepLevel} <span class="ja">${LEVELS[deepLevel - 1].ja}</span></div>
+     <div class="q">${esc(en)}</div>
+     <div class="q-ja">${esc(ja)}</div>
+     <div class="foot">Answering: <b>${esc(who)}</b>${deepLevel === 3 ? " · passing is allowed" : ""}</div>`);
+  controls("deepControls",
+    btn("Next question", deepCard),
+    btn("Everyone answers this one", () => {
+      $("deepCardHost").querySelector(".foot").innerHTML = "<b>Everyone answers</b> — go around the circle.";
+    }, true),
+    btn("Change level", startDeep, true));
+}
+
+/* =====================================================================
+   Mode: Guess Me
+   ===================================================================== */
+let gSubject = 0, gQuestion = null;
+
+function startGuess() {
+  gSubject = turn % players.length;
+  guessAsk();
+  show("s-guess");
+}
+
+function guessAsk() {
+  const name = players[gSubject];
+  const [en, ja] = draw("guess", GUESS);
+  gQuestion = [en.replace(/\{n\}/g, name), ja.replace(/\{n\}/g, name)];
+  $("guessHost").innerHTML = card(1,
+    `<div class="eyebrow">About <span class="ja">${esc(name)}</span></div>
+     <div class="q">${esc(gQuestion[0])}</div>
+     <div class="q-ja">${esc(gQuestion[1])}</div>
+     <div class="foot">Everyone except <b>${esc(name)}</b> says their guess out loud — together, on three.</div>`);
+  controls("guessControls",
+    btn("3・2・1 — say it together", guessCountdown),
+    btn("Different question", guessAsk, true));
+}
+
+function guessCountdown() {
+  let n = 3;
+  const host = $("guessHost");
+  const paint = () => {
+    host.innerHTML = card(1, `<div class="count${n === 0 ? " go" : ""}">${n === 0 ? "せーの！" : n}</div>`);
+  };
+  paint();
+  controls("guessControls");
+  const iv = setInterval(() => {
+    n--;
+    paint();
+    if (n === 0) {
+      clearInterval(iv);
+      setTimeout(guessReveal, 900);
+    }
+  }, 800);
+}
+
+function guessReveal() {
+  const name = players[gSubject];
+  $("guessHost").innerHTML = card(2,
+    `<div class="eyebrow">The real answer <span class="ja">正解</span></div>
+     <div class="q">${esc(gQuestion[0])}</div>
+     <div class="foot"><b>${esc(name)}</b> — tell them the truth. Then score who was right.</div>`);
+  controls("guessControls", btn("Score it", guessScore));
+}
+
+function guessScore() {
+  const name = players[gSubject];
+  const picked = new Set();
+  $("guessHost").innerHTML =
+    `<div class="panel">
+       <div class="eyebrow">Who guessed right? <span class="ja">正解した人</span></div>
+       <div class="tap-list" id="guessTaps"></div>
+       <div class="note">Tap every name that got it. Each one takes a point — and if nobody did, <b>${esc(name)}</b> takes two for being unreadable.</div>
+     </div>`;
+  const taps = $("guessTaps");
+  otherThan(gSubject).forEach(i => {
+    const b = document.createElement("button");
+    b.className = "tap";
+    b.type = "button";
+    b.setAttribute("aria-pressed", "false");
+    b.textContent = players[i];
+    b.addEventListener("click", () => {
+      const on = b.getAttribute("aria-pressed") === "true";
+      b.setAttribute("aria-pressed", on ? "false" : "true");
+      if (on) picked.delete(players[i]); else picked.add(players[i]);
+    });
+    taps.appendChild(b);
+  });
+  controls("guessControls", btn("Next player", () => {
+    if (picked.size) picked.forEach(p => award(p, 1));
+    else award(name, 2);
+    turn++; store.set("turn", turn);
+    gSubject = turn % players.length;
+    guessAsk();
+  }), btn("Finish — see scores", () => {
+    if (picked.size) picked.forEach(p => award(p, 1));
+    else award(name, 2);
+    turn++; store.set("turn", turn);
+    home();
+  }, true));
+}
+
+/* =====================================================================
+   Mode: Most Likely To
+   ===================================================================== */
+function startLikely() { likelyCard(); show("s-likely"); }
+
+function likelyCard() {
+  const [en, ja] = draw("likely", LIKELY);
+  $("likelyHost").innerHTML = card(2,
+    `<div class="eyebrow">Most likely to <span class="ja">一番ありそう</span></div>
+     <div class="q">${esc(en)}</div>
+     <div class="q-ja">${esc(ja)}</div>
+     <div class="foot">On three, everyone points at one person. No talking first.</div>`);
+  controls("likelyControls",
+    btn("3・2・1 — point!", likelyCountdown),
+    btn("Different one", likelyCard, true));
+}
+
+function likelyCountdown() {
+  let n = 3;
+  const paint = () => {
+    $("likelyHost").innerHTML = card(2, `<div class="count${n === 0 ? " go" : ""}">${n === 0 ? "指さして！" : n}</div>`);
+  };
+  paint();
+  controls("likelyControls");
+  const iv = setInterval(() => {
+    n--;
+    paint();
+    if (n === 0) { clearInterval(iv); setTimeout(likelyTally, 900); }
+  }, 800);
+}
+
+function likelyTally() {
+  $("likelyHost").innerHTML =
+    `<div class="panel">
+       <div class="eyebrow">Who got the most fingers? <span class="ja">一番指された人</span></div>
+       <div class="tap-list" id="likelyTaps"></div>
+       <div class="note">Tap the winner — they take the point, and they owe the table an explanation.</div>
+     </div>`;
+  const taps = $("likelyTaps");
+  players.forEach(n => {
+    const b = document.createElement("button");
+    b.className = "tap";
+    b.type = "button";
+    b.textContent = n;
+    b.addEventListener("click", () => { award(n, 1); likelyCard(); });
+    taps.appendChild(b);
+  });
+  controls("likelyControls", btn("Tie — skip it", likelyCard, true), btn("Finish — see scores", home, true));
+}
+
+/* =====================================================================
+   Mode: Two Truths, One Lie
+   ===================================================================== */
+let tSubject = 0;
+
+function startTruths() {
+  tSubject = turn % players.length;
+  truthsThink();
+  show("s-truths");
+}
+
+function truthsThink() {
+  const name = players[tSubject];
+  $("truthsHost").innerHTML = card(3,
+    `<div class="eyebrow">Your turn <span class="ja">${esc(name)}</span></div>
+     <div class="q">Think of two true things and one convincing lie about yourself.</div>
+     <div class="q-ja">自分について、本当のこと2つと、うまい嘘を1つ考えて。</div>
+     <div class="foot">Say all three in a row, in any order. Then the table votes.</div>`);
+  controls("truthsControls",
+    btn("Start 60 seconds", () => startClock(60, "truthsHost", "truthsControls", truthsVote)),
+    btn("Skip the timer", truthsVote, true));
+}
+
+function truthsVote() {
+  const name = players[tSubject];
+  stopClock();
+  const picked = new Set();
+  $("truthsHost").innerHTML =
+    `<div class="panel">
+       <div class="eyebrow">Who spotted the lie? <span class="ja">嘘を見抜いた人</span></div>
+       <div class="tap-list" id="truthsTaps"></div>
+       <div class="note">Everyone votes out loud, then <b>${esc(name)}</b> reveals the lie. Tap whoever was right — a point each, or two for ${esc(name)} if the whole table fell for it.</div>
+     </div>`;
+  const taps = $("truthsTaps");
+  otherThan(tSubject).forEach(i => {
+    const b = document.createElement("button");
+    b.className = "tap";
+    b.type = "button";
+    b.setAttribute("aria-pressed", "false");
+    b.textContent = players[i];
+    b.addEventListener("click", () => {
+      const on = b.getAttribute("aria-pressed") === "true";
+      b.setAttribute("aria-pressed", on ? "false" : "true");
+      if (on) picked.delete(players[i]); else picked.add(players[i]);
+    });
+    taps.appendChild(b);
+  });
+  const settle = () => {
+    if (picked.size) picked.forEach(p => award(p, 1));
+    else award(name, 2);
+    turn++; store.set("turn", turn);
+  };
+  controls("truthsControls",
+    btn("Next player", () => { settle(); tSubject = turn % players.length; truthsThink(); }),
+    btn("Finish — see scores", () => { settle(); home(); }, true));
+}
+
+/* =====================================================================
+   Mode: Hot Seat
+   ===================================================================== */
+let hSubject = 0, hCount = 0;
+
+function startHot() {
+  hSubject = turn % players.length;
+  hotIntro();
+  show("s-hot");
+}
+
+function hotIntro() {
+  const name = players[hSubject];
+  $("hotHost").innerHTML = card(3,
+    `<div class="eyebrow">Hot seat <span class="ja">60秒</span></div>
+     <div class="q">${esc(name)}, sixty seconds. Short answers only.</div>
+     <div class="q-ja">${esc(name)}、60秒。短く答えて。</div>
+     <div class="foot">Someone else holds the phone and reads the questions out.</div>`);
+  controls("hotControls",
+    btn("Start", () => { hCount = 0; startClock(60, null, null, hotDone); hotQuestion(); }),
+    btn("Someone else goes", () => {
+      turn++; store.set("turn", turn);
+      hSubject = turn % players.length;
+      hotIntro();
+    }, true));
+}
+
+function hotQuestion() {
+  const [en, ja] = draw("hot", HOT);
+  const host = $("hotHost");
+  host.innerHTML = card(3,
+    `<div class="eyebrow">${esc(players[hSubject])} <span class="ja">${hCount} answered</span></div>
+     <div class="q">${esc(en)}</div>
+     <div class="q-ja">${esc(ja)}</div>
+     <div class="clock" id="hotClock" style="text-align:left;font-size:1.6rem"></div>`);
+  paintClock();
+  controls("hotControls",
+    btn("Answered — next", () => { hCount++; hotQuestion(); }),
+    btn("Pass", hotQuestion, true));
+}
+
+function hotDone() {
+  const name = players[hSubject];
+  award(name, hCount);
+  $("hotHost").innerHTML = card(1,
+    `<div class="eyebrow">Time <span class="ja">終了</span></div>
+     <div class="q">${esc(name)} got through ${hCount} question${hCount === 1 ? "" : "s"}.</div>
+     <div class="foot">That's ${hCount} point${hCount === 1 ? "" : "s"}. Pass the phone on.</div>`);
+  controls("hotControls",
+    btn("Next player", () => {
+      turn++; store.set("turn", turn);
+      hSubject = turn % players.length;
+      hotIntro();
+    }),
+    btn("Finish — see scores", home, true));
+}
+
+/* =====================================================================
+   Shared countdown clock
+   ===================================================================== */
+let clockId = null, clockLeft = 0, clockEnd = null;
+
+function paintClock() {
+  const el = $("hotClock") || $("bigClock");
+  if (!el) return;
+  el.textContent = clockLeft + "s";
+  el.classList.toggle("low", clockLeft <= 10);
+}
+
+function startClock(secs, hostId, controlsId, onEnd) {
+  stopClock();
+  clockLeft = secs;
+  clockEnd = onEnd;
+  if (hostId) {
+    $(hostId).innerHTML = card(3, `<div class="eyebrow">Thinking time <span class="ja">考え中</span></div><div class="clock" id="bigClock">${secs}s</div>`);
+    if (controlsId) controls(controlsId, btn("Ready — skip ahead", () => { stopClock(); onEnd(); }, true));
+  }
+  const endAt = Date.now() + secs * 1000;
+  clockId = setInterval(() => {
+    clockLeft = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+    paintClock();
+    if (clockLeft <= 0) {
+      stopClock();
+      if (navigator.vibrate) navigator.vibrate([180, 90, 180]);
+      onEnd();
+    }
+  }, 200);
+}
+
+function stopClock() {
+  if (clockId) clearInterval(clockId);
+  clockId = null;
+}
+
+/* =====================================================================
+   Boot
+   ===================================================================== */
+const START = { deep: startDeep, guess: startGuess, likely: startLikely, truths: startTruths, hot: startHot };
+
+renderRoster();
+renderModes();
+renderBoard();
+</script>
+</body>
+</html>

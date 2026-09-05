@@ -4,113 +4,124 @@
    To change colours, open assets/js/content.js and set `theme`.
    ============================================================ */
 
-/* ---------- THEME 1: crimson (default) — dark, strong, red ---------- */
+/* ---------- THEME 1: blush (default) — baby pink, soft and sweet ---------- */
 :root,
-[data-theme="crimson"] {
-  --bg:        #0b0507;
-  --bg-2:      #150809;
-  --surface:   rgba(255, 255, 255, 0.038);
-  --surface-2: rgba(255, 255, 255, 0.065);
-  --text:      #f6ece9;
-  --muted:     #c0a8a6;
-  --accent:    #e02440;
-  --accent-2:  #ff7a86;
-  --line:      rgba(255, 255, 255, 0.11);
-  --glow:      rgba(224, 36, 64, 0.30);
-  --grain-op:  0.055;
-  --shadow:    0 30px 70px rgba(0, 0, 0, 0.55);
-  --swatch:    #e02440;
-  color-scheme: dark;
-}
-
-/* ---------- THEME 2: wine — deep plum, gold-rose ---------- */
-[data-theme="wine"] {
-  --bg:        #110610;
-  --bg-2:      #1c0a1a;
-  --surface:   rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.075);
-  --text:      #f8ece6;
-  --muted:     #c6a9b4;
-  --accent:    #e04a72;
-  --accent-2:  #f0c27b;
-  --line:      rgba(255, 255, 255, 0.12);
-  --glow:      rgba(224, 74, 114, 0.28);
-  --grain-op:  0.05;
-  --shadow:    0 30px 70px rgba(0, 0, 0, 0.55);
-  --swatch:    #e04a72;
-  color-scheme: dark;
-}
-
-/* ---------- THEME 3: dusk — midnight blue, coral ---------- */
-[data-theme="dusk"] {
-  --bg:        #070a14;
-  --bg-2:      #0d1223;
-  --surface:   rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.075);
-  --text:      #eff2fa;
-  --muted:     #a9b4cc;
-  --accent:    #ff5566;
-  --accent-2:  #ffab86;
-  --line:      rgba(255, 255, 255, 0.12);
-  --glow:      rgba(255, 85, 102, 0.26);
-  --grain-op:  0.05;
-  --shadow:    0 30px 70px rgba(0, 0, 0, 0.55);
-  --swatch:    #ff5566;
-  color-scheme: dark;
-}
-
-/* ---------- THEME 4: rose — soft light blush ---------- */
-[data-theme="rose"] {
-  --bg:        #fff6f4;
-  --bg-2:      #ffe9e4;
-  --surface:   rgba(122, 26, 45, 0.045);
-  --surface-2: rgba(122, 26, 45, 0.085);
-  --text:      #3d1620;
-  --muted:     #8a5b63;
-  --accent:    #cf2b4c;
-  --accent-2:  #e97b93;
-  --line:      rgba(61, 22, 32, 0.14);
-  --glow:      rgba(207, 43, 76, 0.13);
-  --grain-op:  0.035;
-  --shadow:    0 24px 60px rgba(122, 26, 45, 0.14);
-  --swatch:    #cf2b4c;
+:root[data-theme="blush"] {
+  --bg:        #fff6f9;
+  --bg-2:      #ffeaf1;
+  --surface:   rgba(200, 60, 110, 0.052);
+  --surface-2: rgba(200, 60, 110, 0.095);
+  --text:      #46212f;
+  --muted:     #86556a;
+  --accent:    #c9375f;
+  --accent-2:  #ffb3cd;
+  --line:      rgba(70, 33, 47, 0.13);
+  --glow:      rgba(255, 158, 195, 0.42);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(200, 90, 130, 0.16);
   color-scheme: light;
 }
 
-/* ---------- THEME 5: cherry — bright cream + hot red ---------- */
-[data-theme="cherry"] {
-  --bg:        #fffaf1;
-  --bg-2:      #fff0dd;
-  --surface:   rgba(120, 20, 20, 0.05);
-  --surface-2: rgba(120, 20, 20, 0.09);
-  --text:      #2c1210;
-  --muted:     #7d534a;
-  --accent:    #e01029;
-  --accent-2:  #ff7a4d;
-  --line:      rgba(44, 18, 16, 0.14);
-  --glow:      rgba(224, 16, 41, 0.12);
-  --grain-op:  0.035;
-  --shadow:    0 24px 60px rgba(120, 40, 20, 0.14);
-  --swatch:    #e01029;
+/* ---------- THEME 2: sky — baby blue ---------- */
+:root[data-theme="sky"] {
+  --bg:        #f4faff;
+  --bg-2:      #e4f1fd;
+  --surface:   rgba(30, 90, 150, 0.05);
+  --surface-2: rgba(30, 90, 150, 0.09);
+  --text:      #1e3247;
+  --muted:     #547090;
+  --accent:    #2270ae;
+  --accent-2:  #a5d6f7;
+  --line:      rgba(30, 50, 71, 0.13);
+  --glow:      rgba(150, 205, 248, 0.45);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(60, 120, 180, 0.16);
   color-scheme: light;
 }
 
-/* ---------- THEME 6: peach — warm terracotta ---------- */
-[data-theme="peach"] {
-  --bg:        #fff7f0;
-  --bg-2:      #ffe9d9;
-  --surface:   rgba(120, 55, 30, 0.05);
-  --surface-2: rgba(120, 55, 30, 0.09);
-  --text:      #3d2018;
-  --muted:     #8b6152;
-  --accent:    #d6482f;
-  --accent-2:  #f0a173;
-  --line:      rgba(61, 32, 24, 0.14);
-  --glow:      rgba(214, 72, 47, 0.12);
-  --grain-op:  0.035;
-  --shadow:    0 24px 60px rgba(120, 55, 30, 0.14);
-  --swatch:    #d6482f;
+/* ---------- THEME 3: lavender — soft purple ---------- */
+:root[data-theme="lavender"] {
+  --bg:        #faf7ff;
+  --bg-2:      #f0e9fd;
+  --surface:   rgba(110, 70, 180, 0.05);
+  --surface-2: rgba(110, 70, 180, 0.09);
+  --text:      #322349;
+  --muted:     #6a5a87;
+  --accent:    #7c4fd0;
+  --accent-2:  #c9b2f2;
+  --line:      rgba(50, 35, 73, 0.13);
+  --glow:      rgba(196, 168, 248, 0.42);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(120, 90, 190, 0.16);
   color-scheme: light;
+}
+
+/* ---------- THEME 4: mint — soft green ---------- */
+:root[data-theme="mint"] {
+  --bg:        #f3fcf8;
+  --bg-2:      #e2f7ee;
+  --surface:   rgba(20, 110, 85, 0.05);
+  --surface-2: rgba(20, 110, 85, 0.09);
+  --text:      #1b3c32;
+  --muted:     #4c7265;
+  --accent:    #16805e;
+  --accent-2:  #9adcc4;
+  --line:      rgba(27, 60, 50, 0.13);
+  --glow:      rgba(155, 228, 202, 0.45);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(50, 150, 120, 0.15);
+  color-scheme: light;
+}
+
+/* ---------- THEME 5: butter — warm cream ---------- */
+:root[data-theme="butter"] {
+  --bg:        #fffbf1;
+  --bg-2:      #fff3dc;
+  --surface:   rgba(150, 105, 20, 0.055);
+  --surface-2: rgba(150, 105, 20, 0.1);
+  --text:      #443318;
+  --muted:     #77613c;
+  --accent:    #99620b;
+  --accent-2:  #ffd98a;
+  --line:      rgba(68, 51, 24, 0.13);
+  --glow:      rgba(255, 219, 150, 0.5);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(170, 130, 50, 0.15);
+  color-scheme: light;
+}
+
+/* ---------- THEME 6: cherry — her red, softened ---------- */
+:root[data-theme="cherry"] {
+  --bg:        #fff8f6;
+  --bg-2:      #ffece8;
+  --surface:   rgba(190, 60, 55, 0.05);
+  --surface-2: rgba(190, 60, 55, 0.09);
+  --text:      #3f1a18;
+  --muted:     #814d47;
+  --accent:    #c73448;
+  --accent-2:  #ffb2a8;
+  --line:      rgba(63, 26, 24, 0.13);
+  --glow:      rgba(255, 178, 168, 0.42);
+  --grain-op:  0.028;
+  --shadow:    0 26px 60px rgba(200, 90, 80, 0.16);
+  color-scheme: light;
+}
+
+/* ---------- THEME 7: midnight — soft dark, for reading at 2am ---------- */
+:root[data-theme="midnight"] {
+  --bg:        #14121f;
+  --bg-2:      #1c1930;
+  --surface:   rgba(255, 255, 255, 0.05);
+  --surface-2: rgba(255, 255, 255, 0.088);
+  --text:      #f0ecfa;
+  --muted:     #b0a7c9;
+  --accent:    #f291b8;
+  --accent-2:  #a9c8f5;
+  --line:      rgba(255, 255, 255, 0.13);
+  --glow:      rgba(240, 145, 185, 0.22);
+  --grain-op:  0.045;
+  --shadow:    0 30px 70px rgba(0, 0, 0, 0.5);
+  color-scheme: dark;
 }
 
 /* ============================ base ============================ */
@@ -146,7 +157,7 @@ img { max-width: 100%; display: block; }
 :focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 3px;
-  border-radius: 4px;
+  border-radius: 8px;
 }
 
 /* film grain */
@@ -398,7 +409,7 @@ img { max-width: 100%; display: block; }
   text-align: left;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 18px;
   padding: 2rem 1.6rem 1.7rem;
   color: inherit;
   font: inherit;
@@ -468,7 +479,7 @@ img { max-width: 100%; display: block; }
   text-align: center;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 18px;
   padding: 2.6rem 1.3rem 1.9rem;
   color: inherit;
   font: inherit;
@@ -546,7 +557,7 @@ img { max-width: 100%; display: block; }
   aspect-ratio: 4 / 5;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 2px;
+  border-radius: 16px;
   overflow: hidden;
   cursor: pointer;
   padding: 0;
@@ -608,7 +619,7 @@ img { max-width: 100%; display: block; }
   text-align: left;
   background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 3px;
+  border-radius: 18px;
   padding: 1.1rem 1.3rem;
   color: inherit;
   font: inherit;
@@ -652,7 +663,7 @@ img { max-width: 100%; display: block; }
 .track-embed {
   grid-column: 1 / -1;
   aspect-ratio: 16 / 9;
-  border-radius: 3px;
+  border-radius: 18px;
   overflow: hidden;
   border: 1px solid var(--line);
 }
@@ -746,7 +757,7 @@ img { max-width: 100%; display: block; }
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 18px;
   padding: 0.45rem;
   display: grid;
   gap: 0.15rem;
@@ -808,7 +819,7 @@ img { max-width: 100%; display: block; }
   overscroll-behavior: contain;
   background: var(--bg-2);
   border: 1px solid var(--line);
-  border-radius: 4px;
+  border-radius: 24px;
   padding: clamp(2rem, 5vw, 3.4rem);
   box-shadow: var(--shadow);
   animation: readerin 0.5s cubic-bezier(.22,.61,.36,1) both;
@@ -890,7 +901,7 @@ img { max-width: 100%; display: block; }
   max-height: 78svh;
   width: auto;
   margin: 0 auto;
-  border-radius: 3px;
+  border-radius: 18px;
   box-shadow: var(--shadow);
 }
 .lb-figure figcaption {
@@ -938,7 +949,7 @@ img { max-width: 100%; display: block; }
     flex: 1 1 22%;
     background: var(--surface);
     border: 1px solid var(--line);
-    border-radius: 3px;
+    border-radius: 18px;
     padding: 0.8rem 0.2rem 0.7rem;
   }
   .env-grid, .letter-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }

@@ -81,26 +81,27 @@
      THEME
      ====================================================================== */
   var THEMES = [
-    { id: "crimson", label: "crimson",  swatch: "#e02440" },
-    { id: "wine",    label: "wine",     swatch: "#e04a72" },
-    { id: "dusk",    label: "dusk",     swatch: "#ff5566" },
-    { id: "rose",    label: "rose",     swatch: "#cf2b4c" },
-    { id: "cherry",  label: "cherry",   swatch: "#e01029" },
-    { id: "peach",   label: "peach",    swatch: "#d6482f" }
+    { id: "blush",    label: "baby pink", swatch: "#f7a8c4" },
+    { id: "sky",      label: "baby blue", swatch: "#8fcaf0" },
+    { id: "lavender", label: "lavender",  swatch: "#c0a6ef" },
+    { id: "mint",     label: "mint",      swatch: "#8fd9be" },
+    { id: "butter",   label: "butter",    swatch: "#f5cf82" },
+    { id: "cherry",   label: "cherry",    swatch: "#f09a92" },
+    { id: "midnight", label: "midnight",  swatch: "#f291b8" }
   ];
 
-  var BG = { crimson: "#0b0507", wine: "#110610", dusk: "#070a14",
-             rose: "#fff6f4", cherry: "#fffaf1", peach: "#fff7f0" };
+  var BG = { blush: "#fff6f9", sky: "#f4faff", lavender: "#faf7ff", mint: "#f3fcf8",
+             butter: "#fffbf1", cherry: "#fff8f6", midnight: "#14121f" };
 
   function validTheme(t) {
     return THEMES.some(function (x) { return x.id === t; }) ? t : null;
   }
 
   function applyTheme(t, remember) {
-    t = validTheme(t) || "crimson";
+    t = validTheme(t) || "blush";
     document.documentElement.setAttribute("data-theme", t);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute("content", BG[t] || "#0b0507");
+    if (meta) meta.setAttribute("content", BG[t] || "#fff6f9");
     if (remember) store.set("theme", t);
     Array.prototype.forEach.call(document.querySelectorAll(".theme-opt"), function (b) {
       b.setAttribute("aria-current", b.dataset.theme === t ? "true" : "false");

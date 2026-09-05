@@ -31,13 +31,14 @@ const CONTENT = {
   /* Pick the starting colour theme. She can change it herself with the
      "colours" button in the top-right corner, and it remembers her choice.
 
-     Choose one:  "crimson"  dark + strong red   ← the one you asked for
-                  "wine"     deep plum + gold
-                  "dusk"     midnight blue + coral
-                  "rose"     soft light blush
-                  "cherry"   cream + hot cherry red
-                  "peach"    warm peach + terracotta          */
-  theme: "crimson",
+     Choose one:  "blush"     baby pink, soft and sweet   ← the default
+                  "sky"       baby blue
+                  "lavender"  soft purple
+                  "mint"      soft green
+                  "butter"    warm cream
+                  "cherry"    her red, softened
+                  "midnight"  soft dark, nice for reading at 2am   */
+  theme: "blush",
 
 
   /* ------------------------------------------------------------------

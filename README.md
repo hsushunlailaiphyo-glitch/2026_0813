@@ -82,7 +82,7 @@ Add these to the end of the site's address:
 | Address | What it does |
 |---|---|
 | `?preview` | Skip the countdown and see the finished site right now |
-| `?theme=rose` | Preview any theme without editing anything |
+| `?theme=sky` | Preview any theme without editing anything |
 | `?reset` | Put the countdown back and re-seal all the envelopes |
 
 Example: `https://nann.pages.dev/?preview`
@@ -135,7 +135,7 @@ the right choice — it will still open in a browser in 2040.
 
 ## What she can do herself, today
 
-- **Change the colours** — the "colours" button, top right. Six themes. It remembers her choice.
+- **Change the colours** — the "colours" button, top right. Seven pastel themes. It remembers her choice.
 - **Open the sealed letters** — the site quietly records the date she first opened each one, so it becomes a record of her hard days.
 - Everything works offline-ish, on any phone, with no login.
 
@@ -167,7 +167,7 @@ something heartfelt — that's your real deadline, not the code.
 
 ```
 index.html              the page skeleton
-assets/css/style.css    all the design + the six colour themes
+assets/css/style.css    all the design + the seven colour themes
 assets/js/content.js    ← everything you edit
 assets/js/app.js        the countdown + the interactions
 photos/                 your pictures go here

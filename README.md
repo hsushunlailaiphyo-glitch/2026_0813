@@ -75,6 +75,62 @@ Nothing looks broken either way.
 
 ---
 
+## How to add the videos (Sutaki's message + your wishes)
+
+**Use YouTube. Do not put the video files in the repo.** A phone video is
+usually 200MB-2GB; GitHub refuses anything over 100MB, and even a small one
+would make the site slow to open on her data connection.
+
+1. Upload the video to YouTube
+2. On the upload screen set visibility to **Unlisted**
+   - Unlisted = it will **not** appear on your channel, and nobody can search
+     for it. Only people with the link can see it. This is the right setting.
+   - Do *not* pick Private — private videos won't play on the site.
+3. Copy the link: `youtube.com/watch?v=`**`ABC123xyz`**
+4. Paste the part after `v=` into `youtubeId` in `content.js`:
+
+```js
+videos: [
+  { title: "a message from Sutaki", note: "she recorded this for you", youtubeId: "ABC123xyz" },
+  { title: "our wishes", note: "all of us, saying it out loud", youtubeId: "DEF456uvw" },
+],
+```
+
+Until you paste the ids, those slots show a soft "video coming soon" frame
+rather than anything broken.
+
+> **Small video (under ~40MB)?** You *can* upload it to a `videos` folder in
+> the repo and write `{ title: "...", file: "videos/sutaki.mp4" }` instead.
+> YouTube is still easier and faster for her.
+
+---
+
+## How to put photos inside a letter
+
+Add one `photos` line to that letter in `content.js`:
+
+```js
+{
+  from: "Phyu",
+  role: "your friend",
+  preview: "...",
+  body: [ "..." ],
+  signature: "phyu",
+  photos: ["photos/phyu-1.jpg", "photos/phyu-2.jpg"],
+},
+```
+
+Upload those files to the `photos` folder first (GitHub → `photos` → Add file
+→ Upload files). The pictures appear underneath that letter when she opens it.
+
+- **One photo** looks great. **Two** sit side by side. **Three or four** stack.
+- More than four is a lot — the gallery section is the better home for those.
+- The "open when" letters take `photos:` the same way.
+- If you mistype a filename, that picture just quietly disappears instead of
+  showing a broken-image icon.
+
+---
+
 ## Secret addresses (for you, not for her)
 
 Add these to the end of the site's address:
@@ -149,17 +205,35 @@ birthday. This version is deliberately the gift, done properly, on time.
 
 ## Your checklist before 28 September
 
-- [ ] Rewrite all 5 letters in `letters:` with your real words
-- [ ] Rewrite the 8 `openWhen:` letters (or ask Sutaki, Phyu, Pann Wai and Tho to write some)
+**Done:**
+- [x] Phyu's birthday letter
+- [x] Phyu's three "open when" letters (lonely / sad / anxious)
+- [x] Andy's letter (Burmese)
+
+**Still to do:**
+- [ ] Upload Sutaki's video + the wishes video to YouTube as **Unlisted**, paste the two ids
+- [ ] Write your own letter (`Shun`) — replace the placeholder
+- [ ] Get Sutaki's letter — replace the placeholder
+- [ ] Get Ko Aung Thukha's letter — replace the placeholder
+- [ ] Replace the 7 remaining placeholder "open when" letters (the 3 from Phyu are real)
 - [ ] Upload photos + add them to `photos:`, then set `emptySlots: 0`
+- [ ] Add photos inside individual letters if you want them
 - [ ] Paste the YouTube ids for the wave to earth songs
-- [ ] Check it on your own phone with `?preview`
-- [ ] Deploy to Cloudflare Pages **at least a week early** so nothing is rushed on the day
+- [ ] Check Andy's Burmese renders correctly on your phone (see below)
+- [ ] Deploy to Cloudflare Pages
 - [ ] Visit `?reset` on your phone afterwards so *you* see the countdown too
 - [ ] Send her the link on the 28th
 
-**Message Sutaki, Phyu, Pann Wai and Tho today.** People need a week to write
-something heartfelt — that's your real deadline, not the code.
+### One thing to check about Andy's letter
+
+Burmese has two competing encodings — **Unicode** and the older **Zawgyi**.
+The site loads the Noto Sans Myanmar font, which expects Unicode. If Andy
+typed on a Zawgyi keyboard, his message will look scrambled to her.
+
+**Just open the site on your phone and look at Andy's letter.** If it reads
+correctly, you're fine. If it looks wrong, ask Andy to resend it from a
+Unicode keyboard (every modern Android and iPhone is Unicode by default),
+or paste his text into a free online "Zawgyi to Unicode" converter.
 
 ---
 
@@ -172,3 +246,6 @@ assets/js/content.js    ← everything you edit
 assets/js/app.js        the countdown + the interactions
 photos/                 your pictures go here
 ```
+
+The order she sees it in: **countdown → videos → letters → open when →
+photos → playlist**.

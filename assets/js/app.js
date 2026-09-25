@@ -238,6 +238,7 @@
     $("hero-body").innerHTML = paras(hero.body);
 
     var nav = [
+      { href: "#videos",   label: "video",     on: (C.videos || []).length },
       { href: "#letters",  label: "letters",   on: (C.letters || []).length },
       { href: "#openwhen", label: "open when", on: (C.openWhen || []).length },
       { href: "#photos",   label: "photos",    on: true },
@@ -247,6 +248,11 @@
       return '<a href="' + n.href + '">' + esc(n.label) + "</a>";
     }).join("");
 
+    /* ---- videos ---- */
+    setText("videos-title", C.videosTitle);
+    setText("videos-lede", C.videosLede);
+    renderVideos();
+
     /* ---- letters ---- */
     setText("letters-title", C.lettersTitle);
     setText("letters-lede", C.lettersLede);
@@ -255,7 +261,7 @@
       return '<button class="letter-card" data-letter="' + i + '">' +
         '<p class="lc-from">' + esc(l.from) + "</p>" +
         '<p class="lc-role">' + esc(l.role || "") + "</p>" +
-        '<p class="lc-preview">' + esc(l.preview || (l.body || [])[0] || "") + "</p>" +
+        '<p class="lc-preview' + (l.lang === "my" ? " is-my" : "") + '">' + esc(l.preview || (l.body || [])[0] || "") + "</p>" +
         '<span class="lc-open">read it &rarr;</span>' +
       "</button>";
     }).join("");
@@ -267,7 +273,9 @@
         eyebrow: "a letter from " + (l.from || ""),
         title: l.from || "",
         body: l.body,
-        signature: l.signature || l.from
+        signature: l.signature || l.from,
+        lang: l.lang,
+        photos: l.photos
       });
     });
 
@@ -302,6 +310,8 @@
         title: o.title,
         body: o.body,
         signature: o.signature,
+        lang: o.lang,
+        photos: o.photos,
         meta: "you first opened this on " + prettyDate(+when)
       });
     });
@@ -369,6 +379,44 @@
     });
   }
 
+  /* ---------------------------- videos ---------------------------- */
+  function renderVideos() {
+    var grid = $("video-grid");
+    if (!grid) return;
+
+    grid.innerHTML = (C.videos || []).map(function (v, i) {
+      var inner;
+      if (v.youtubeId || v.file) {
+        inner = '<button class="video-frame" data-video="' + i + '" aria-label="play ' + esc(v.title) + '">' +
+                (v.youtubeId ? '<img src="https://i.ytimg.com/vi/' + encodeURIComponent(v.youtubeId) +
+                               '/hqdefault.jpg" alt="" loading="lazy">' : "") +
+                '<span class="video-play" aria-hidden="true">&#9654;</span></button>';
+      } else {
+        inner = '<div class="video-frame empty"><span>video coming soon</span></div>';
+      }
+      return '<div class="video-card reveal" id="video-' + i + '">' + inner +
+        '<div class="video-meta">' +
+          '<p class="video-title">' + esc(v.title) + "</p>" +
+          (v.note ? '<p class="video-note">' + esc(v.note) + "</p>" : "") +
+        "</div></div>";
+    }).join("");
+
+    grid.addEventListener("click", function (e) {
+      var b = e.target.closest("[data-video]");
+      if (!b) return;
+      var v = C.videos[+b.dataset.video];
+      if (v.youtubeId) {
+        b.outerHTML = '<div class="video-frame"><iframe ' +
+          'src="https://www.youtube-nocookie.com/embed/' + encodeURIComponent(v.youtubeId) + '?autoplay=1&rel=0" ' +
+          'title="' + esc(v.title) + '" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" ' +
+          'allowfullscreen></iframe></div>';
+      } else if (v.file) {
+        b.outerHTML = '<div class="video-frame"><video src="' + esc(v.file) +
+          '" controls autoplay playsinline></video></div>';
+      }
+    });
+  }
+
   /* ---------------------------- music ---------------------------- */
   function renderMusic() {
     var list = $("track-list");
@@ -412,7 +460,20 @@
     lastFocus = document.activeElement;
     setText("reader-eyebrow", o.eyebrow);
     setText("reader-title", o.title);
-    $("reader-body").innerHTML = paras(o.body);
+    var rb = $("reader-body");
+    rb.innerHTML = paras(o.body);
+    rb.className = "reader-body" + (o.lang === "my" ? " is-my" : "");
+
+    var rp = $("reader-photos");
+    var pics = (o.photos || []).filter(Boolean);
+    rp.className = "reader-photos" + (pics.length === 2 ? " two" : "");
+    rp.innerHTML = pics.map(function (src) {
+      return '<img src="' + esc(src) + '" alt="" loading="lazy">';
+    }).join("");
+    // a mistyped filename shouldn't leave a broken-image icon in a letter
+    Array.prototype.forEach.call(rp.querySelectorAll("img"), function (img) {
+      img.addEventListener("error", function () { img.remove(); });
+    });
     setText("reader-sign", o.signature ? "— " + o.signature : "");
     setText("reader-meta", o.meta || "");
     $("reader-meta").hidden = !o.meta;

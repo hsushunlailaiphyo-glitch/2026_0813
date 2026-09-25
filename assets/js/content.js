@@ -2,7 +2,7 @@
    ✏️  THIS IS THE ONLY FILE YOU NEED TO EDIT.
    ==========================================================================
 
-   Every word, photo and song on the website comes from this file.
+   Every word, photo, video and song on the website comes from this file.
 
    THREE RULES so you never break it:
      1. Text goes inside "quotes".
@@ -48,7 +48,7 @@ const CONTENT = {
   gate: {
     eyebrow: "something is waiting for",
     note: "come back on the 28th. it opens by itself.",
-    signature: "— shun, sutaki & phyu",
+    signature: "— shun, sutaki, phyu & andy",
   },
 
 
@@ -60,31 +60,99 @@ const CONTENT = {
     eyebrow: "september 28",
     title: "Nann Wai",
     subtitle: "twenty-four, and still the warmest person we know",
-    // Each "..." below is one paragraph. Add or remove as you like.
     body: [
       "This is not a card. It is a small room we built for you, and it stays open all year.",
-      "There are letters inside from the five people who love you most. Some of them are sealed — you'll know when to open those.",
+      "Start with the video. Then read the letters. Some of them are sealed — you'll know when to open those.",
     ],
   },
 
 
   /* ------------------------------------------------------------------
-     4. LETTERS FROM THE FIVE OF YOU
+     4. VIDEOS  —  the first thing she sees
      ------------------------------------------------------------------
-     ✏️ REPLACE every `body` below with your real words.
-     The placeholder text is deliberately gentle so that if you run out
-     of time, nothing on the site reads as unfinished — but please
-     replace it. Your real words are the whole point.
+     EASIEST WAY TO ADD A VIDEO (do this, not the other way):
 
-     `preview` is the 2 lines shown on the card before she clicks.
-     `body` is the letter itself — one "..." per paragraph.
+       1. Upload the video to YouTube.
+       2. On the upload screen set visibility to **Unlisted**.
+          Unlisted = nobody can find it or search it, only people with
+          the link. It will NOT appear on your channel.
+       3. Copy the link. It looks like  youtube.com/watch?v=ABC123xyz
+       4. Paste the part after  v=  into `youtubeId` below.
+
+     Why YouTube and not the repo: a phone video is often 200MB-2GB.
+     GitHub refuses files over 100MB, and even a small one would make
+     the site slow to open. YouTube streams it instantly on any phone,
+     for free, and handles her data connection for her.
+
+     If a video is small (under ~40MB) you CAN put it in a `videos`
+     folder instead and write:  { title: "...", file: "videos/x.mp4" },
      ------------------------------------------------------------------ */
 
-  lettersTitle: "letters, from the five of us",
-  lettersLede: "Five people wrote to you. Take your time — they are not going anywhere.",
+  videosTitle: "watch this first",
+  videosLede: "Before you read anything — press play.",
+
+  videos: [
+    {
+      title: "a message from Sutaki",
+      note: "she recorded this for you",
+      youtubeId: "",          // ✏️ paste the YouTube id here
+    },
+    {
+      title: "our wishes",
+      note: "all of us, saying it out loud",
+      youtubeId: "",          // ✏️ paste the YouTube id here
+    },
+  ],
+
+
+  /* ------------------------------------------------------------------
+     5. LETTERS
+     ------------------------------------------------------------------
+     TO PUT PHOTOS INSIDE A LETTER, add a `photos` line to it:
+
+         photos: ["photos/phyu-1.jpg", "photos/phyu-2.jpg"],
+
+     Upload those files to the `photos` folder first. The pictures
+     appear underneath that letter when she opens it. One photo looks
+     great; two or three look great; more than four is a lot.
+
+     `lang: "my"` switches that letter to the Burmese font.
+     Leave it out for English letters.
+     ------------------------------------------------------------------ */
+
+  lettersTitle: "letters, from the people who love you",
+  lettersLede: "Take your time. They are not going anywhere.",
 
   letters: [
     {
+      from: "Phyu",
+      role: "your friend",
+      preview: "Happy birthday our warm and big-hearted girl 🫶. You are the sister I could never had.",
+      body: [
+        "Dearest Nann,",
+        "Happy birthday our warm and big-hearted girl 🫶. I am so glad to be with u on ur bd. And wish I could spend together every birthday of u and me. And this letter is all about my wishes for u.",
+        "You are already a perfect girl, smart, funny, confident, and sexy 🤓. I just hope u carry less emotional burden of others. Otherwise it also makes me feel sad seeing u crying.",
+        "And I know u had a big trauma from LS, but REMEMBER u don't have to face those things anymore. U have me 🫶, I will hate anyone who have done bad things to u, anyone u hate, and will never leave u alone. I will blame together with u to people who give u stress.",
+        "You are the sister I could never had. Love u Nann.",
+        "Again, Happy Birthday 🥳 !!!!",
+      ],
+      signature: "phyu",
+      // photos: ["photos/phyu-1.jpg"],
+    },
+    {
+      from: "Andy",
+      role: "your friend",
+      lang: "my",
+      preview: "ငါ့ဘဝမှာ သူငယ်ချင်းလို့ပြောရင် ဒီလောက်နဲ့ ပြည့်စုံပြီလို့ ဆိုရလောက်တဲ့ သူငယ်ချင်းမျိုး",
+      body: [
+        "Happy Birthday ချစ်တုံး",
+        "ငါ့ဘဝမှာ သူငယ်ချင်းလို့ပြောရင်\nသူကတော့ ဒါကောင်းတယ်\nဒါမကောင်းဘူး ဆိုတာမျိုး မရှိ\nဒီလောက်နဲ့ ပြည့်စုံပြီလို့\nဆိုရလောက်တဲ့ သူငယ်ချင်းမျိုးအနေနဲ့\nဘဝထဲ ဝင်လာပေးလို့ ကျေးဇူး👉🏼👈🏼",
+        "အစစအရာရာ အဆင်ပြေပြီး\nစိတ်ရော ကိုယ်ရော ကျန်းမာ ချမ်းသာ ပါစေ ကောင်မ",
+      ],
+      signature: "andy",
+    },
+    {
+      // ✏️ REPLACE — this one is still a placeholder
       from: "Shun",
       role: "your friend",
       preview: "I have wanted to tell you these things for a long time, and a birthday felt like a good excuse.",
@@ -98,6 +166,7 @@ const CONTENT = {
       signature: "shun",
     },
     {
+      // ✏️ REPLACE — this one is still a placeholder
       from: "Sutaki",
       role: "your friend",
       preview: "Happy birthday to the one who keeps all of us together without ever making it look like work.",
@@ -110,30 +179,7 @@ const CONTENT = {
       signature: "sutaki",
     },
     {
-      from: "Phyu",
-      role: "your friend",
-      preview: "Some people are kind because it is polite. You are kind because you actually mean it.",
-      body: [
-        "Nann Wai,",
-        "Some people are kind because it is polite. You are kind because you actually mean it, and I have watched you do it for years now.",
-        "You are so much stronger than you give yourself credit for. Independent, stubborn in the best way, and softer than you let people see.",
-        "Happy birthday. Please be as good to yourself as you are to us.",
-      ],
-      signature: "phyu",
-    },
-    {
-      from: "Pann Wai",
-      role: "your little sister",
-      preview: "I got the best one. I have known that since I was small and I still know it now.",
-      body: [
-        "To my sister,",
-        "I got the best one. I have known that since I was small and I still know it now.",
-        "Thank you for going first at everything so that it would be less scary for me.",
-        "Happy birthday. I love you.",
-      ],
-      signature: "pann wai",
-    },
-    {
+      // ✏️ REPLACE — this one is still a placeholder
       from: "Tho",
       role: "ko aung thukha",
       preview: "Of all the ordinary days, the best ones are the ones with you in them.",
@@ -143,28 +189,69 @@ const CONTENT = {
         "Happy birthday, my love. Here's to another year of your laugh, your camera, and your terrible music timing.",
         "I'm proud of you. Always.",
       ],
-      signature: "tho",
+      signature: "ko aung thukha",
     },
   ],
 
 
   /* ------------------------------------------------------------------
-     5. "OPEN WHEN" LETTERS
+     6. "OPEN WHEN" LETTERS
      ------------------------------------------------------------------
      Sealed envelopes she opens on the day she needs them.
      The site quietly remembers the date she first opened each one.
 
-     ✏️ REPLACE the `body` of each. Whoever writes it goes in `signature`.
-     Feel free to delete any you don't want, or add new ones by copying
-     a block. Keep the `id` unique — that's how the site remembers.
+     These can take `photos:` too, exactly like the letters above.
+     Keep each `id` unique — that is how the site remembers.
      ------------------------------------------------------------------ */
 
   openWhenTitle: "open when...",
-  openWhenLede: "Eight sealed letters. Don't read them all today. Save them for the days that need them.",
+  openWhenLede: "Ten sealed letters. Don't read them all today. Save them for the days that need them.",
   openWhenFoot: "we'll keep adding to these. it's never going to be finished.",
 
   openWhen: [
     {
+      id: "alone",
+      title: "you feel lonely",
+      body: [
+        "Dearest Nann,",
+        "If you're opening this, I'm guessing you're feeling a bit isolated or empty right now.",
+        "First, remember how busy life gets or how less often we hangout, I am always there for you. Distance or time can never change how much you mean to me.",
+        "You don't have to carry the weight of the whole family on your own, and you are always welcome to reach out (like when I was in Malaysia). I am even proud to be the one u reach out, just say “Phyu, I need u”.",
+        "I love you when you're laughing, and I love you when you're feeling quiet and disconnected. And sometimes I might be giving u personal space or taking my emotional space, but that doesn't mean I stop loving u🫶.",
+        "Put on our favorite sitcom, wrap yourself in a warm blanket, switch on ur heater to 29 degree 🤭, rest on the pillow I gave u, and send me a text or call me whenever you're ready. I'm right here. You are never alone.",
+        "With so much love,",
+      ],
+      signature: "phyu 💕",
+    },
+    {
+      id: "sad",
+      title: "you feel sad",
+      body: [
+        "Dearest Nann,",
+        "I'm so sorry if today is feeling heavy. Whatever happened or even if you just woke up feeling a wave of sadness and loneliness for no specific reason, I want you to know that it's completely okay to feel this way.",
+        "You don't have to force yourself to be happy, positive, stay strong, or be there for everyone. Let yourself feel what you need to feel, and cry if you need to. Your feelings are valid, and taking time to rest your heart is important.",
+        "I know how warm, kind, and resilient you are, but right now, you don't need to fix anything. Just be gentle with yourself. Make a warm cup of milk, lie down, and take it one hour at a time.",
+        "Whenever you want to talk or even if you just want to sit together in silence, I'm here for you👯‍♀️.",
+        "Always here for you,",
+      ],
+      signature: "phyu 🫂",
+    },
+    {
+      id: "anxious",
+      title: "you feel anxious or overwhelmed",
+      body: [
+        "Dearest Nann,",
+        "Stop for 10 seconds, take one deep breath in and slow breath out.",
+        "I know your mind might be overwhelmed right now, feeling like everything is too much to handle. But I need you to remember who you are: you have made it through 100% of your hardest days so far, and you will get through this moment, too. You are the most confident person I have ever met.",
+        "You don't have to figure out your whole future or solve every problem today. Just focus on the very next step, no matter how small it is.",
+        "Even if things don't go perfectly, some people badmouth you, your worth doesn't change. I believe in you, I trust your strength, and I'm rooting for you no matter what.",
+        "Take things one moment at a time. You've got this, I promise.",
+        "Your biggest cheerleader,",
+      ],
+      signature: "phyu phyu 🫶",
+    },
+    {
+      // ✏️ REPLACE — placeholder
       id: "tired",
       title: "you are tired",
       body: [
@@ -175,16 +262,7 @@ const CONTENT = {
       signature: "shun",
     },
     {
-      id: "alone",
-      title: "you feel alone",
-      body: [
-        "You are not. You just can't feel us from where you're standing right now.",
-        "There are five people who would pick up if you called at 3am and not one of them would be annoyed about it. Not one.",
-        "Read this again. Then message one of us. That's the whole assignment.",
-      ],
-      signature: "sutaki",
-    },
-    {
+      // ✏️ REPLACE — placeholder
       id: "cantsleep",
       title: "you can't sleep",
       body: [
@@ -192,9 +270,10 @@ const CONTENT = {
         "Put on something soft. Let the room be dark. You are safe.",
         "Goodnight, Nann Wai.",
       ],
-      signature: "phyu",
+      signature: "shun",
     },
     {
+      // ✏️ REPLACE — placeholder
       id: "missus",
       title: "you miss us",
       body: [
@@ -202,9 +281,10 @@ const CONTENT = {
         "Distance hasn't done anything to this. We are exactly where you left us.",
         "Scroll up. Look at the photos. Then come back and tell us you miss us — we like hearing it.",
       ],
-      signature: "shun, sutaki & phyu",
+      signature: "shun, sutaki, phyu & andy",
     },
     {
+      // ✏️ REPLACE — placeholder
       id: "misshome",
       title: "you miss home",
       body: [
@@ -212,9 +292,10 @@ const CONTENT = {
         "You carry it with you anyway — in how you talk, how you feed people, how you love.",
         "Home is not somewhere behind you. Some of it is right here reading this with you.",
       ],
-      signature: "pann wai",
+      signature: "all of us",
     },
     {
+      // ✏️ REPLACE — placeholder
       id: "proud",
       title: "you are proud of yourself",
       body: [
@@ -222,9 +303,10 @@ const CONTENT = {
         "You are so quick to make yourself small about your own wins, so this letter is here to make you sit in it for a minute.",
         "You did that. Nobody did it for you.",
       ],
-      signature: "tho",
+      signature: "all of us",
     },
     {
+      // ✏️ REPLACE — placeholder
       id: "laugh",
       title: "you need to laugh",
       body: [
@@ -235,6 +317,7 @@ const CONTENT = {
       signature: "sutaki",
     },
     {
+      // ✏️ REPLACE — placeholder
       id: "doubt",
       title: "you doubt yourself",
       body: [
@@ -248,7 +331,7 @@ const CONTENT = {
 
 
   /* ------------------------------------------------------------------
-     6. PHOTOS
+     7. PHOTOS  (the gallery)
      ------------------------------------------------------------------
      HOW TO ADD A PHOTO:
        1. Put the image file in the `photos` folder.
@@ -268,23 +351,19 @@ const CONTENT = {
   emptySlots: 6,
 
   photos: [
-    // ✏️ Delete this comment and add your photos here, for example:
+    // ✏️ add your photos here, for example:
     // { src: "photos/nann-01.jpg", caption: "the night we didn't sleep" },
-    // { src: "photos/nann-02.jpg", caption: "okayama, spring" },
   ],
 
 
   /* ------------------------------------------------------------------
-     7. MUSIC
+     8. MUSIC  (the playlist, last)
      ------------------------------------------------------------------
-     HOW TO ADD THE YOUTUBE LINK:
-       A YouTube URL looks like  youtube.com/watch?v=ABC123xyz
-       The bit after  v=  is the id. Paste just that bit into `youtubeId`.
+     A YouTube address looks like  youtube.com/watch?v=ABC123xyz
+     Paste just the bit after  v=  into `youtubeId`.
 
-       Example:  youtubeId: "ABC123xyz",
-
-     If you leave youtubeId empty (""), the song still shows and
-     clicking it searches YouTube — so nothing looks broken.
+     If you leave it empty (""), the song still shows and clicking it
+     searches YouTube — so nothing ever looks broken.
      ------------------------------------------------------------------ */
 
   musicTitle: "something soft, for the background",
@@ -300,7 +379,7 @@ const CONTENT = {
 
 
   /* ------------------------------------------------------------------
-     8. THE LAST THING SHE READS
+     9. THE LAST THING SHE READS
      ------------------------------------------------------------------ */
 
   closing: {
@@ -308,7 +387,7 @@ const CONTENT = {
     body: [
       "This site doesn't expire. Come back on a bad Tuesday in February. Come back at 2am. It will still be here, and so will we.",
     ],
-    signature: "with everything — shun, sutaki & phyu",
+    signature: "with everything — shun, sutaki, phyu & andy",
   },
 
   footerMade: "made by hand, with love, in okayama",

@@ -10,7 +10,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#10084;&#65039;</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Inter:wght@300;400;500;600&family=Caveat:wght@500;600&family=Noto+Sans+Myanmar:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -63,10 +63,20 @@
   </header>
 
   <main>
-    <!-- letters from the five of us -->
-    <section class="section" id="letters">
+    <!-- videos — the first thing she sees -->
+    <section class="section" id="videos">
       <div class="wrap">
         <p class="eyebrow reveal">no. 01</p>
+        <h2 class="section-title reveal" id="videos-title"></h2>
+        <p class="section-lede reveal" id="videos-lede"></p>
+        <div class="video-grid" id="video-grid"></div>
+      </div>
+    </section>
+
+    <!-- letters -->
+    <section class="section section-alt" id="letters">
+      <div class="wrap">
+        <p class="eyebrow reveal">no. 02</p>
         <h2 class="section-title reveal" id="letters-title"></h2>
         <p class="section-lede reveal" id="letters-lede"></p>
         <div class="letter-grid" id="letter-grid"></div>
@@ -74,9 +84,9 @@
     </section>
 
     <!-- open when -->
-    <section class="section section-alt" id="openwhen">
+    <section class="section" id="openwhen">
       <div class="wrap">
-        <p class="eyebrow reveal">no. 02</p>
+        <p class="eyebrow reveal">no. 03</p>
         <h2 class="section-title reveal" id="ow-title"></h2>
         <p class="section-lede reveal" id="ow-lede"></p>
         <div class="env-grid" id="env-grid"></div>
@@ -85,9 +95,9 @@
     </section>
 
     <!-- photos -->
-    <section class="section" id="photos">
+    <section class="section section-alt" id="photos">
       <div class="wrap">
-        <p class="eyebrow reveal">no. 03</p>
+        <p class="eyebrow reveal">no. 04</p>
         <h2 class="section-title reveal" id="photos-title"></h2>
         <p class="section-lede reveal" id="photos-lede"></p>
         <div class="photo-grid" id="photo-grid"></div>
@@ -95,9 +105,9 @@
     </section>
 
     <!-- music -->
-    <section class="section section-alt" id="music">
+    <section class="section" id="music">
       <div class="wrap">
-        <p class="eyebrow reveal">no. 04</p>
+        <p class="eyebrow reveal">no. 05</p>
         <h2 class="section-title reveal" id="music-title"></h2>
         <p class="section-lede reveal" id="music-lede"></p>
         <div class="track-list" id="track-list"></div>
@@ -130,6 +140,7 @@
     <p class="reader-eyebrow" id="reader-eyebrow"></p>
     <h3 class="reader-title" id="reader-title"></h3>
     <div class="reader-body" id="reader-body"></div>
+    <div class="reader-photos" id="reader-photos"></div>
     <p class="reader-sign" id="reader-sign"></p>
     <p class="reader-meta" id="reader-meta"></p>
   </article>
